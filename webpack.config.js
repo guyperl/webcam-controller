@@ -15,95 +15,97 @@ const appHtmlTitle = 'Webpack Boilerplate';
  * Webpack Configuration
  */
 module.exports = {
-    entry: {
-        vendor: [
-            'lodash'
-        ],
-        bundle: path.join(dirApp, 'index')
-    },
-    resolve: {
-        modules: [
-            dirNode,
-            dirApp,
-            dirAssets
-        ]
-    },
-    plugins: [
-        new webpack.DefinePlugin({
-            IS_DEV: IS_DEV
-        }),
-
-        new webpack.ProvidePlugin({
-            // lodash
-            '_': 'lodash'
-        }),
-
-        new HtmlWebpackPlugin({
-            template: path.join(__dirname, 'index.ejs'),
-            title: appHtmlTitle
-        })
+  devtool: 'source-map',
+  entry: {
+    vendor: [
+      'lodash',
+      'node_modules'
     ],
-    module: {
-        rules: [
-            // BABEL
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                exclude: /(node_modules)/,
-                options: {
-                    compact: true
-                }
-            },
+    bundle: path.join(dirApp, 'index')
+  },
+  resolve: {
+    modules: [
+      dirNode,
+      dirApp,
+      dirAssets
+    ]
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      IS_DEV: IS_DEV
+    }),
 
-            // STYLES
-            {
-                test: /\.css$/,
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            sourceMap: IS_DEV
-                        }
-                    },
-                ]
-            },
+    new webpack.ProvidePlugin({
+      // lodash
+      '_': 'lodash'
+    }),
 
-            // CSS / SASS
-            {
-                test: /\.scss/,
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            sourceMap: IS_DEV
-                        }
-                    },
-                    {
-                        loader: 'sass-loader',
-                        options: {
-                            sourceMap: IS_DEV,
-                            includePaths: [dirAssets]
-                        }
-                    }
-                ]
-            },
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'index.ejs'),
+      title: appHtmlTitle
+    })
+  ],
+  module: {
+    rules: [
+      // BABEL
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /(node_modules)/,
+        options: {
+          compact: true
+        }
+      },
 
-            // EJS
-            {
-                test: /\.ejs$/,
-                loader: 'ejs-loader'
-            },
-
-            // IMAGES
-            {
-                test: /\.(jpe?g|png|gif)$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[path][name].[ext]'
-                }
+      // STYLES
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: IS_DEV
             }
+          },
         ]
-    }
+      },
+
+      // CSS / SASS
+      {
+        test: /\.scss/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: IS_DEV
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: IS_DEV,
+              includePaths: [dirAssets]
+            }
+          }
+        ]
+      },
+
+      // EJS
+      {
+        test: /\.ejs$/,
+        loader: 'ejs-loader'
+      },
+
+      // IMAGES
+      {
+        test: /\.(jpe?g|png|gif)$/,
+        loader: 'file-loader',
+        options: {
+          name: '[path][name].[ext]'
+        }
+      }
+    ]
+  }
 };

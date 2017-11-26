@@ -14,6 +14,7 @@
     "url": "https://cvgellhorn@github.com/cvgellhorn/webpack-boilerplate.git"
   },
   "dependencies": {
+    "js-objectdetect": "0.0.1",
     "lodash": "^4.17.4"
   },
   "devDependencies": {
