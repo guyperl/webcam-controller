@@ -9,7 +9,7 @@ const dirNode = 'node_modules';
 const dirApp = path.join(__dirname, 'app');
 const dirAssets = path.join(__dirname, 'assets');
 
-const appHtmlTitle = 'Webpack Boilerplate';
+const appHtmlTitle = 'Webcam Controller';
 
 /**
  * Webpack Configuration
@@ -18,8 +18,7 @@ module.exports = {
   devtool: 'source-map',
   entry: {
     vendor: [
-      'lodash',
-      'node_modules'
+      'lodash'
     ],
     bundle: path.join(dirApp, 'index')
   },
@@ -41,21 +40,35 @@ module.exports = {
     }),
 
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'index.ejs'),
+      template: path.join(__dirname, 'index.html'),
       title: appHtmlTitle
     })
   ],
   module: {
+    loaders: [
+      // {
+      //   test: require.resolve('js-objectdetect/js/objectdetect'),
+      //   loader: 'exports-loader?objectdetect'
+      // },
+      // {
+      //   test: require.resolve('js-objectdetect/js/objectdetect.handfist'),
+      //   loader: 'imports-loader?this=>objectdetect'
+      // },
+      // {
+      //   test: require.resolve('js-objectdetect/js/objectdetect.handopen'),
+      //   loader: 'imports-loader?this=>objectdetect'
+      // }
+    ],
     rules: [
-      // BABEL
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /(node_modules)/,
-        options: {
-          compact: true
-        }
-      },
+      // // BABEL
+      // {
+      //   test: /\.js$/,
+      //   loader: 'babel-loader?retainLines=true',
+      //   exclude: /(node_modules)/,
+      //   options: {
+      //     compact: true
+      //   }
+      // },
 
       // STYLES
       {
@@ -90,12 +103,6 @@ module.exports = {
             }
           }
         ]
-      },
-
-      // EJS
-      {
-        test: /\.ejs$/,
-        loader: 'ejs-loader'
       },
 
       // IMAGES

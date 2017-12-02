@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+  <script src="node_modules/js-objectdetect/js/objectdetect.js"></script>
+  <script src="node_modules/js-objectdetect/js/objectdetect.handfist.js"></script>
+  <script src="node_modules/js-objectdetect/js/objectdetect.handopen.js"></script>
+</head>
+<body>
+<div class="camera" style="display: none;">
+  <video id="video">Video stream not available.</video>
+</div>
+<canvas id="canvas" style="transform: scaleX(-1);"></canvas>
+</body>
+</html>
