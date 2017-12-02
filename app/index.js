@@ -9,7 +9,10 @@ const MOTION = {
   none: Symbol('NONE')
 };
 
-const moveThreshold = 20;
+const MOVE_THRESHOLD = 5;
+const VIDEO_WIDTH = 640;
+const MOVEMENT_THROTTLE_TIME = 100;
+const MOVEMENT_BUFFER_TIME = 300;
 
 function initialize() {
   const video = document.getElementById('video');
@@ -30,7 +33,7 @@ function initialize() {
     .fromEvent(video, 'canplay')
     .first()
     .map(() => {
-      const width = 640;
+      const width = VIDEO_WIDTH;
       const height = video.videoHeight / (video.videoWidth / width);
       video.setAttribute('width', width);
       video.setAttribute('height', height);
@@ -92,7 +95,7 @@ function getDirection(coordinatesOld, coordinates) {
 
   let y;
   const dy = position.y - positionOld.y;
-  if (Math.abs(dy) > moveThreshold) {
+  if (Math.abs(dy) > MOVE_THRESHOLD) {
     y = dy > 0 ? MOTION.down : MOTION.up;
   } else {
     y = MOTION.none;
@@ -100,7 +103,7 @@ function getDirection(coordinatesOld, coordinates) {
 
   let x;
   const dx = position.x - positionOld.x;
-  if (Math.abs(dx) > moveThreshold) {
+  if (Math.abs(dx) > MOVE_THRESHOLD) {
     x = dy > 0 ? MOTION.left : MOTION.right;
   } else {
     x = MOTION.none;
@@ -129,7 +132,7 @@ function getDirectionViewValue(direction) {
   return viewValue;
 }
 
-function getMostOccuringMove(movesCollection) {
+function getMostOccurringMove(movesCollection) {
   const { motion } = movesCollection.reduce(({ maxCount, motion, motionMap }, move) => {
     const moveCount = motionMap.get(move);
     const newMoveCount = moveCount ? moveCount + 1 : 1;
@@ -151,27 +154,26 @@ function detectMotion(media) {
   const context = canvas.getContext('2d');
 
   return Rx.Observable
-    .interval(0, Rx.Scheduler.animationFrame)
+    .interval(0, MOVEMENT_THROTTLE_TIME)
     .takeWhile(isVideoReady)
     .map(() => detect(video, detector))
     .map(coordinates => {
       draw(video, canvas, context, coordinates);
       return coordinates;
     })
-    .throttleTime(100)
     .pairwise()
     .filter(([coordinatesOld, coordinates]) => coordinatesOld && coordinates)
     .map(([coordinatesOld, coordinates]) => getDirection(coordinatesOld, coordinates))
-    .bufferCount(5)
+    .bufferTime(MOVEMENT_BUFFER_TIME)
     .map(positions => {
       const { xMoves, yMoves } = positions.reduce(({xMoves, yMoves}, [x, y]) => {
         return { xMoves: xMoves.concat(x), yMoves: yMoves.concat(y) };
       }, { xMoves: [], yMoves: [] });
 
-      const xMotion = getMostOccuringMove(xMoves);
-      const yMotion = getMostOccuringMove(yMoves);
-
-      return { horizontal: xMotion, vertical: yMotion };
+      return {
+        horizontal: getMostOccurringMove(xMoves),
+        vertical: getMostOccurringMove(yMoves)
+      };
     })
     .filter(({ horizontal, vertical }) => horizontal || vertical);
 }
@@ -182,7 +184,20 @@ function start() {
       ({ video, canvas, context, detector: createDetector(video) }))
     .flatMap(media => detectMotion(media))
     .subscribe(motion => {
-      console.log(getDirectionViewValue(motion.horizontal), getDirectionViewValue(motion.vertical));
+      const horizontalMoveViewValue = getDirectionViewValue(motion.horizontal);
+      const verticalMoveViewValue = getDirectionViewValue(motion.vertical);
+
+      if (horizontalMoveViewValue) {
+        console.log('HORIZONTAL:', getDirectionViewValue(motion.horizontal), '\n');
+      }
+
+      if (verticalMoveViewValue) {
+        console.log('VERTICAL:', getDirectionViewValue(motion.vertical), '\n');
+      }
+
+      if (horizontalMoveViewValue || verticalMoveViewValue) {
+        console.log('\n');
+      }
     });
 }
 
