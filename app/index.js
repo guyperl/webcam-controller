@@ -154,7 +154,7 @@ function detectMotion(media) {
   const context = canvas.getContext('2d');
 
   return Rx.Observable
-    .interval(0, MOVEMENT_THROTTLE_TIME)
+    .interval(MOVEMENT_THROTTLE_TIME)
     .takeWhile(isVideoReady)
     .map(() => detect(video, detector))
     .map(coordinates => {
