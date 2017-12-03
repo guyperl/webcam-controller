@@ -44,7 +44,7 @@ function initialize() {
     });
 
   return Rx.Observable
-    .combineLatest(getUserMediaObservable, playObservable)
+    .zip(getUserMediaObservable, playObservable)
     .map(([, videoData]) => (videoData));
 }
 
