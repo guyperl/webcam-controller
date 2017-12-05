@@ -84,7 +84,7 @@ function createDetector(video) {
   return new objectdetect.detector(width, height, 1.1, objectdetect.handfist);
 }
 
-function isNotVideoReady() {
+function videoNotReady() {
   return !(video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0);
 }
 
@@ -154,7 +154,7 @@ function detectMotion(media) {
 
   return Rx.Observable
     .interval(MOVEMENT_THROTTLE_TIME)
-    .skipWhile(isNotVideoReady)
+    .skipWhile(videoNotReady)
     .map(() => detect(video, detector))
     .map(coordinates => {
       draw(video, canvas, context, coordinates);
