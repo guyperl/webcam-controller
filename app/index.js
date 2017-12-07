@@ -11,7 +11,7 @@ const MOTION = {
 
 const MOVE_THRESHOLD = 5;
 const VIDEO_WIDTH = 640;
-const MOVEMENT_THROTTLE_TIME = 100;
+const MOVEMENT_INTERVAL = 100;
 const MOVEMENT_BUFFER_TIME = 300;
 
 function initialize() {
@@ -103,7 +103,7 @@ function getDirection(coordinatesOld, coordinates) {
   let x;
   const dx = position.x - positionOld.x;
   if (Math.abs(dx) > MOVE_THRESHOLD) {
-    x = dy > 0 ? MOTION.left : MOTION.right;
+    x = dy > 0 ? MOTION.right : MOTION.left;
   } else {
     x = MOTION.none;
   }
@@ -153,7 +153,7 @@ function detectMotion(media) {
   const context = canvas.getContext('2d');
 
   return Rx.Observable
-    .interval(MOVEMENT_THROTTLE_TIME)
+    .interval(MOVEMENT_INTERVAL)
     .skipWhile(videoNotReady)
     .map(() => detect(video, detector))
     .map(coordinates => {
