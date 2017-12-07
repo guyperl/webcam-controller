@@ -19,7 +19,7 @@ function initialize() {
   const canvas = document.getElementById('canvas');
 
   const getUserMediaObservable = Rx.Observable
-    .fromPromise(() => navigator.mediaDevices.getUserMedia({ video: true, audio: false }))
+    .fromPromise(navigator.mediaDevices.getUserMedia({ video: true, audio: false }))
     .catch(error => {
       console.log(`Error occured: ${error}`);
     })
